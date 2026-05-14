@@ -1,16 +1,20 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven'
+        jdk 'JDK21'
+    }
+
     environment {
         SONAR_TOKEN = credentials('sonar-token')
-        BRANCH_NAME = "${env.BRANCH_NAME}"
     }
 
     stages {
 
         stage('Info') {
             steps {
-                echo "Branch actual: ${BRANCH_NAME}"
+                echo "Branch actual: ${env.BRANCH_NAME}"
             }
         }
 
@@ -20,23 +24,39 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Test') { 
             steps {
                 sh 'mvn test'
             }
+            
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            } 
         }
-
-        stage('SonarQube') {
+ 
+       stage('SonarQube') {
             when {
-                branch 'develop'
+                anyOf {
+                    branch 'develop'
+                    branch 'qa'
+                    branch 'main'
+                }
             }
             steps {
-                sh '''
-                mvn sonar:sonar \
-                -Dsonar.projectKey=${BRANCH_NAME} \
-                -Dsonar.host.url=http://sonarqube:9000 \
-                -Dsonar.login=$SONAR_TOKEN
-                '''
+                withSonarQubeEnv('sonar-local') {
+                    sh '''
+                    mvn clean verify sonar:sonar \
+                    -Dsonar.projectKey=ms-pedidos
+                    '''
+                }
+            }
+        } 
+
+        stage('Package') {
+            steps {
+                sh 'mvn package -DskipTests'
             }
         }
 
@@ -45,7 +65,7 @@ pipeline {
                 branch 'develop'
             }
             steps {
-                sh 'echo "Deploy en entorno DEV"'
+                echo "Deploy en DEV..."
             }
         }
 
@@ -54,7 +74,7 @@ pipeline {
                 branch 'qa'
             }
             steps {
-                sh 'echo "Deploy en entorno QA"'
+                echo "Deploy en QA..."
             }
         }
 
@@ -63,8 +83,17 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh 'echo "Deploy en PRODUCCIÓN 🚨"'
+                echo "Deploy en PRODUCCIÓN 🚨"
             }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Pipeline exitoso"
+        }
+        failure {
+            echo "❌ Pipeline falló"
         }
     }
 }
