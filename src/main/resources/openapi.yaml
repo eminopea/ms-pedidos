@@ -1,0 +1,184 @@
+openapi: 3.0.0
+info:
+  title: API Gestión de Pedidos
+  version: 1.2.0
+
+paths:
+
+  /pedidos:
+    get:
+      summary: Obtener pedidos ordenados por fecha ascendente
+      responses:
+        '200':
+          description: Lista de pedidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PedidoResponse'
+
+    post:
+      summary: Crear pedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PedidoRequest'
+      responses:
+        '200':
+          description: Pedido creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PedidoResponse'
+
+  /productos:
+    post:
+      summary: Crear producto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductoRequest'
+      responses:
+        '200':
+          description: Producto creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductoResponse'
+
+components:
+  schemas:
+
+    # =============================
+    # ENUM
+    # =============================
+    EstadoPedido:
+      type: string
+      enum:
+        - PENDIENTE
+        - CONFIRMADO
+        - CANCELADO
+
+    # =============================
+    # BASE RESPONSE (HERENCIA)
+    # =============================
+    BaseResponse:
+      type: object
+      properties:
+        id:
+          type: string
+
+    # =============================
+    # PEDIDO REQUEST
+    # =============================
+    PedidoRequest:
+      type: object
+      required:
+        - documentNumber
+        - productos
+      properties:
+        documentNumber:
+          type: string
+        productos:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductoDetalleRequest'
+
+    # =============================
+    # PEDIDO RESPONSE
+    # =============================
+    PedidoResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            fechaRegistro:
+              type: string
+              format: date
+            estado:
+              $ref: '#/components/schemas/EstadoPedido'
+            total:
+              type: string
+              format: decimal
+            productos:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductoDetalleResponse'
+            documentNumber:
+              type: string
+            client:
+              type: string
+
+    # =============================
+    # PRODUCTO REQUEST
+    # =============================
+    ProductoRequest:
+      type: object
+      required:
+        - nombre
+        - precio
+      properties:
+        nombre:
+          type: string
+        precio:
+          type: string
+          format: decimal
+        stock:
+          type: integer        
+
+    # =============================
+    # PRODUCTO RESPONSE
+    # =============================
+    ProductoResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            nombre:
+              type: string
+            precio:
+              type: string
+              format: decimal
+            stock:
+              type: integer
+
+    # =============================
+    # PRODUCTO DETALLE BASE
+    # =============================
+    ProductoDetalleBase:
+      type: object
+      properties:
+        productoId:
+          type: string
+        cantidad:
+          type: integer
+          minimum: 1
+        precio:
+          type: string
+          format: decimal
+
+    # =============================
+    # PRODUCTO DETALLE REQUEST
+    # =============================
+    ProductoDetalleRequest:
+      allOf:
+        - $ref: '#/components/schemas/ProductoDetalleBase'
+
+    # =============================
+    # PRODUCTO DETALLE RESPONSE
+    # =============================
+    ProductoDetalleResponse:
+      allOf:
+        - $ref: '#/components/schemas/ProductoDetalleBase'
+        - type: object
+          properties:
+            nombre:
+              type: string
+            subtotal:
+              type: string
+              format: decimal
