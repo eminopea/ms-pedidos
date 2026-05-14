@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: ms-pedidos
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/customerdb
+
+server:
+  port: 7082
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      clienteService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
