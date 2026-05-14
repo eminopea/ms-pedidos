@@ -2,8 +2,7 @@ package com.template.ms_pedidos.application.usecase;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalDate; 
 
 import org.openapitools.model.PedidoRequest;
 import org.springframework.http.HttpStatus;
