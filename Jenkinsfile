@@ -109,93 +109,8 @@ pipeline {
                     }
                 }
             }
-        }
-
-        stage('Checkout Infra') {
-            steps {
-                dir('infra') {
-                    git url: 'https://github.com/eminopea/infra-ntt.git', branch: 'main'
-                }
-            }
-        }
-
-        // ==========================
-        // DEPLOY
-        // ==========================
-        stage('Deploy DEV') {
-            when { branch 'develop' }
-            
-            steps {
-                    script {
-                        echo "[DEV] Iniciando despliegue de ${PROJECT_NAME}"
-                        echo "Imagen: ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
-                        echo "Ambiente: DEV"
-
-                        sh """
-                        cd infra
-                        VERSION=${env.BUILD_NUMBER} docker compose -f docker-compose.dev.yml --env-file .env.dev up -d
-                        """
-
-                        echo "[DEV] Despliegue completado correctamente"
-                    }
-            }
-
-            post {
-                failure {
-                    echo "[DEV] Error durante el despliegue"
-                }
-            }
         } 
-
-        stage('Deploy QA') {
-            when { branch 'qa' }
-            steps {
-                script {
-                    echo "[QA] Iniciando despliegue de ${PROJECT_NAME}"
-                    echo "Imagen: ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
-                    echo "Ambiente: QA"
-
-                    sh """
-                    cd infra
-                    VERSION=${env.BUILD_NUMBER} docker compose -f docker-compose.qa.yml --env-file .env.qa up -d
-                    """
-
-                    echo "[QA] Despliegue completado correctamente"
-                }
-            }
-            post {
-                failure {
-                    echo "[QA] Error durante el despliegue"
-                }
-            }
-        }
-
-
-        stage('Deploy PROD') {
-            when { branch 'main' }
-            steps {
-                script {
-                    echo "[PROD] Preparando despliegue de ${PROJECT_NAME}"
-                    echo "Imagen: ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
-                    echo "Ambiente: PRODUCCIÓN"
-
-                    input message: "¿Aprobar despliegue a PRODUCCIÓN?"
-
-
-                    sh """
-                    cd infra
-                    VERSION=${env.BUILD_NUMBER} docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
-                    """
-
-                    echo "[PROD] Despliegue en producción completado"
-                }
-            }
-            post {
-                failure {
-                    echo "[PROD] FALLÓ el despliegue en producción"
-                }
-            }
-        }
+    
     }
 
     // ==========================
@@ -203,10 +118,10 @@ pipeline {
     // ==========================
     post {
         success {
-            echo "✅ Pipeline exitoso"
+            echo "✅ Pipeline CI exitoso"
         }
         failure {
-            echo "❌ Pipeline falló"
+            echo "❌ Pipeline CI falló"
         }
     }
 }
