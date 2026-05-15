@@ -103,7 +103,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 script {
-                    docker.withRegistry("https://${REGISTRY}", 'docker-credentials') {
+                    docker.withRegistry("https://index.docker.io/v1/", 'docker-credentials'){
                         dockerImage.push("${env.BUILD_NUMBER}")
                         dockerImage.push("latest")
                     }
