@@ -1,3 +1,12 @@
+// ==========================
+// VARIABLES GLOBALES
+// ==========================
+def PROJECT_NAME = "ms-pedidos"
+def JAVA_VERSION = "MAVEN339_JDK11_OPENJ9"
+def DOCKER_IMAGE = "eminope/${PROJECT_NAME}"
+def REGISTRY = "docker.io"
+def SONAR_PROJECT_KEY = PROJECT_NAME
+
 pipeline {
     agent any
 
@@ -8,35 +17,48 @@ pipeline {
 
     environment {
         SONAR_TOKEN = credentials('sonar-token')
+        DOCKER_CREDENTIALS = credentials('docker-credentials')
     }
 
     stages {
 
-        stage('Info') {
+        // ==========================
+        // CHECKOUT
+        // ==========================
+        stage('Checkout') {
             steps {
-                echo "Branch actual: ${env.BRANCH_NAME}"
+                checkout scm
+                echo "📌 Branch actual: ${env.BRANCH_NAME}"
             }
         }
 
+        // ==========================
+        // BUILD
+        // ==========================
         stage('Build') {
             steps {
                 sh 'mvn clean compile'
             }
         }
 
-        stage('Test') { 
+        // ==========================
+        // TEST
+        // ==========================
+        stage('Test') {
             steps {
                 sh 'mvn test'
             }
-            
             post {
                 always {
                     junit 'target/surefire-reports/*.xml'
                 }
-            } 
+            }
         }
- 
-       stage('SonarQube') {
+
+        // ==========================
+        // SONAR (opcional pero recomendado)
+        // ==========================
+        stage('SonarQube') {
             when {
                 anyOf {
                     branch 'develop'
@@ -46,48 +68,77 @@ pipeline {
             }
             steps {
                 withSonarQubeEnv('sonar-local') {
-                    sh '''
-                    mvn clean verify sonar:sonar \
-                    -Dsonar.projectKey=ms-pedidos
-                    '''
+                    sh """
+                    mvn verify sonar:sonar \
+                    -Dsonar.projectKey=${SONAR_PROJECT_KEY}
+                    """
                 }
             }
-        } 
+        }
 
+        // ==========================
+        // PACKAGE
+        // ==========================
         stage('Package') {
             steps {
                 sh 'mvn package -DskipTests'
             }
         }
 
-        stage('Deploy DEV') {
-            when {
-                branch 'develop'
-            }
+        // ==========================
+        // DOCKER BUILD: sirve para crear la imagen Docker a partir del Dockerfile en el proyecto
+        // Necesitamos un Dockerfile en el proyecto con la configuración para construir la imagen
+        // ==========================
+        stage('Docker Build') {
             steps {
-                echo "Deploy en DEV..."
+                script {
+                    dockerImage = docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
+                }
+            }
+        }
+
+        // ==========================
+        // DOCKER PUSH: sirve para subir la imagen Docker al registry (Docker Hub, ECR, GCR, etc.)
+        // ==========================
+        stage('Docker Push') {
+            steps {
+                script {
+                    docker.withRegistry("https://index.docker.io/v1/", 'docker-credentials'){
+                        dockerImage.push("${env.BUILD_NUMBER}")
+                        dockerImage.push("latest")
+                    }
+                }
+            }
+        }
+
+        // ==========================
+        // DEPLOY
+        // ==========================
+        stage('Deploy DEV') {
+            when { branch 'develop' }
+            steps {
+                echo "🚀 Deploy en DEV (${PROJECT_NAME})"
             }
         }
 
         stage('Deploy QA') {
-            when {
-                branch 'qa'
-            }
+            when { branch 'qa' }
             steps {
-                echo "Deploy en QA..."
+                echo "🚀 Deploy en QA (${PROJECT_NAME})"
             }
         }
 
         stage('Deploy PROD') {
-            when {
-                branch 'main'
-            }
+            when { branch 'main' }
             steps {
-                echo "Deploy en PRODUCCIÓN 🚨"
+                echo "🚨 Deploy en PRODUCCIÓN (${PROJECT_NAME})"
             }
         }
     }
 
+    // ==========================
+    // POST
+    // ==========================
     post {
         success {
             echo "✅ Pipeline exitoso"
