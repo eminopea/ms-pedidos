@@ -4,7 +4,7 @@
 def PROJECT_NAME = "ms-pedidos"
 def JAVA_VERSION = "MAVEN339_JDK11_OPENJ9"
 def DOCKER_IMAGE = "eminope/${PROJECT_NAME}"
-def REGISTRY = "docker.io"
+def REGISTRY = "index.docker.io/v1/"
 def SONAR_PROJECT_KEY = PROJECT_NAME
 
 pipeline {
@@ -103,7 +103,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 script {
-                    docker.withRegistry("https://index.docker.io/v1/", 'docker-credentials'){
+                    docker.withRegistry("https://${REGISTRY}", 'docker-credentials'){
                         dockerImage.push("${env.BUILD_NUMBER}")
                         dockerImage.push("latest")
                     }
