@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY target/*.jar ms-pedidos.jar
 
-EXPOSE 7082
+EXPOSE 8080
 
 ENTRYPOINT ["java","-jar","ms-pedidos.jar"]
