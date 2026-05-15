@@ -3,7 +3,7 @@ spring:
     name: ms-pedidos
   data:
     mongodb:
-      uri: mongodb://localhost:27017/customerdb
+      uri: mongodb://mongo:27017/customerdb
 
 server:
   port: 7082
