@@ -124,20 +124,22 @@ pipeline {
         // ==========================
         stage('Deploy DEV') {
             when { branch 'develop' }
+            
             steps {
-                script {
-                    echo "[DEV] Iniciando despliegue de ${PROJECT_NAME}"
-                    echo "Imagen: ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
-                    echo "Ambiente: DEV"
+                    script {
+                        echo "[DEV] Iniciando despliegue de ${PROJECT_NAME}"
+                        echo "Imagen: ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
+                        echo "Ambiente: DEV"
 
-                    sh '''
-                    cd infra
-                    docker compose -f docker-compose.dev.yml --env-file .env.dev up -d
-                    '''
+                        sh """
+                        cd infra
+                        VERSION=${env.BUILD_NUMBER} docker compose -f docker-compose.dev.yml --env-file .env.dev up -d
+                        """
 
-                    echo "[DEV] Despliegue completado correctamente"
-                }
+                        echo "[DEV] Despliegue completado correctamente"
+                    }
             }
+
             post {
                 failure {
                     echo "[DEV] Error durante el despliegue"
@@ -153,10 +155,10 @@ pipeline {
                     echo "Imagen: ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
                     echo "Ambiente: QA"
 
-                    sh '''
+                    sh """
                     cd infra
-                    docker compose -f docker-compose.qa.yml --env-file .env.qa up -d
-                    '''
+                    VERSION=${env.BUILD_NUMBER} docker compose -f docker-compose.qa.yml --env-file .env.qa up -d
+                    """
 
                     echo "[QA] Despliegue completado correctamente"
                 }
@@ -179,10 +181,11 @@ pipeline {
 
                     input message: "¿Aprobar despliegue a PRODUCCIÓN?"
 
-                    sh '''
+
+                    sh """
                     cd infra
-                    docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
-                    '''
+                    VERSION=${env.BUILD_NUMBER} docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
+                    """
 
                     echo "[PROD] Despliegue en producción completado"
                 }
