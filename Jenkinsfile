@@ -117,21 +117,72 @@ pipeline {
         stage('Deploy DEV') {
             when { branch 'develop' }
             steps {
-                echo "🚀 Deploy en DEV (${PROJECT_NAME})"
+                script {
+                    echo "[DEV] Iniciando despliegue de ${PROJECT_NAME}"
+                    echo "Imagen: ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
+                    echo "Ambiente: DEV"
+
+                    sh '''
+                    cd infra
+                    docker-compose -f docker-compose.dev.yml --env-file .env.dev up -d
+                    '''
+
+                    echo "[DEV] Despliegue completado correctamente"
+                }
             }
-        }
+            post {
+                failure {
+                    echo "[DEV] Error durante el despliegue"
+                }
+            }
+        } 
 
         stage('Deploy QA') {
             when { branch 'qa' }
             steps {
-                echo "🚀 Deploy en QA (${PROJECT_NAME})"
+                script {
+                    echo "[QA] Iniciando despliegue de ${PROJECT_NAME}"
+                    echo "Imagen: ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
+                    echo "Ambiente: QA"
+
+                    sh '''
+                    cd infra
+                    docker-compose -f docker-compose.qa.yml --env-file .env.qa up -d
+                    '''
+
+                    echo "[QA] Despliegue completado correctamente"
+                }
+            }
+            post {
+                failure {
+                    echo "[QA] Error durante el despliegue"
+                }
             }
         }
+
 
         stage('Deploy PROD') {
             when { branch 'main' }
             steps {
-                echo "🚨 Deploy en PRODUCCIÓN (${PROJECT_NAME})"
+                script {
+                    echo "[PROD] Preparando despliegue de ${PROJECT_NAME}"
+                    echo "Imagen: ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
+                    echo "Ambiente: PRODUCCIÓN"
+
+                    input message: "¿Aprobar despliegue a PRODUCCIÓN?"
+
+                    sh '''
+                    cd infra
+                    docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d
+                    '''
+
+                    echo "[PROD] Despliegue en producción completado"
+                }
+            }
+            post {
+                failure {
+                    echo "[PROD] FALLÓ el despliegue en producción"
+                }
             }
         }
     }
