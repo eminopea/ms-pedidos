@@ -3,7 +3,7 @@
 // ==========================
 def PROJECT_NAME = "ms-pedidos"
 def JAVA_VERSION = "MAVEN339_JDK11_OPENJ9"
-def DOCKER_IMAGE = "repo/${PROJECT_NAME}"
+def DOCKER_IMAGE = "eminope/${PROJECT_NAME}"
 def REGISTRY = "docker.io"
 def SONAR_PROJECT_KEY = PROJECT_NAME
 
