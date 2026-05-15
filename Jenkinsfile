@@ -111,6 +111,14 @@ pipeline {
             }
         }
 
+        stage('Checkout Infra') {
+            steps {
+                dir('infra') {
+                    git url: 'https://github.com/eminopea/infra-ntt.git', branch: 'main'
+                }
+            }
+        }
+
         // ==========================
         // DEPLOY
         // ==========================
