@@ -132,7 +132,7 @@ pipeline {
 
                     sh '''
                     cd infra
-                    docker-compose -f docker-compose.dev.yml --env-file .env.dev up -d
+                    docker compose -f docker-compose.dev.yml --env-file .env.dev up -d
                     '''
 
                     echo "[DEV] Despliegue completado correctamente"
@@ -155,7 +155,7 @@ pipeline {
 
                     sh '''
                     cd infra
-                    docker-compose -f docker-compose.qa.yml --env-file .env.qa up -d
+                    docker compose -f docker-compose.qa.yml --env-file .env.qa up -d
                     '''
 
                     echo "[QA] Despliegue completado correctamente"
@@ -181,7 +181,7 @@ pipeline {
 
                     sh '''
                     cd infra
-                    docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d
+                    docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
                     '''
 
                     echo "[PROD] Despliegue en producción completado"
