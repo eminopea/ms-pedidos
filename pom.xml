@@ -80,7 +80,16 @@
 			<version>3.3.2</version>
 			<scope>compile</scope>
 		</dependency>
-
+		<!-- KAFKA -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+		<!-- REACTOR KAFKA -->
+		<dependency>
+			<groupId>io.projectreactor.kafka</groupId>
+			<artifactId>reactor-kafka</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

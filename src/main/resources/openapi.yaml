@@ -61,8 +61,8 @@ components:
       type: string
       enum:
         - PENDIENTE
-        - CONFIRMADO
-        - CANCELADO
+        - RECIBIDO
+        - APROBADO
 
     # =============================
     # BASE RESPONSE (HERENCIA)

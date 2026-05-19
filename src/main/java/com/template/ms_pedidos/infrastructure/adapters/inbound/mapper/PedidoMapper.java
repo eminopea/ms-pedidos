@@ -1,12 +1,10 @@
 package com.template.ms_pedidos.infrastructure.adapters.inbound.mapper;
 
-import java.time.ZoneOffset;
-
 import org.openapitools.model.PedidoResponse;
 import org.openapitools.model.ProductoDetalleResponse;
 import org.springframework.stereotype.Component;
 
-import com.template.ms_pedidos.domain.dto.ProductoDetalle;
+import com.template.ms_pedidos.infrastructure.adapters.inbound.dto.ProductoDetalle;
 import com.template.ms_pedidos.domain.model.Pedido;
 
 @Component
