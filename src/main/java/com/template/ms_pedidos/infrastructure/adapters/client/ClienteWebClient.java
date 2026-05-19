@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import com.template.ms_pedidos.domain.dto.Cliente;
+import com.template.ms_pedidos.infrastructure.adapters.inbound.dto.Cliente;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;

@@ -24,7 +24,7 @@ import org.openapitools.model.ProductoDetalleRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.template.ms_pedidos.domain.dto.Cliente;
+import com.template.ms_pedidos.infrastructure.adapters.inbound.dto.Cliente;
 import com.template.ms_pedidos.domain.model.Pedido;
 import com.template.ms_pedidos.domain.model.Producto;
 import com.template.ms_pedidos.domain.ports.ClienteRepositoryPort;

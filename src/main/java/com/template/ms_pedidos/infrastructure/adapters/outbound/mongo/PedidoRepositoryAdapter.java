@@ -25,4 +25,9 @@ public class PedidoRepositoryAdapter implements PedidoRepositoryPort {
     public Mono<Pedido> save(Pedido pedido) {
         return repo.save(pedido);
     }
+
+    @Override
+    public Mono<Pedido> findById(String id) {
+        return repo.findById(id);
+    }
 }

@@ -1,4 +1,4 @@
-package com.template.ms_pedidos.domain.dto;
+package com.template.ms_pedidos.infrastructure.adapters.inbound.dto;
  
 
 import lombok.AllArgsConstructor;
