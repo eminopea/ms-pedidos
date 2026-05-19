@@ -1,4 +1,4 @@
-package com.template.ms_pedidos.config;
+package com.template.ms_pedidos.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

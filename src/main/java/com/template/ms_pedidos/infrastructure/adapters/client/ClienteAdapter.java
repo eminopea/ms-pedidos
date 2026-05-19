@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.template.ms_pedidos.domain.dto.Cliente;
+import com.template.ms_pedidos.infrastructure.adapters.inbound.dto.Cliente;
 import com.template.ms_pedidos.domain.ports.ClienteRepositoryPort;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;

@@ -8,4 +8,5 @@ import reactor.core.publisher.Mono;
 public interface PedidoRepositoryPort {
     Flux<Pedido> findAllOrderByFecha();
     Mono<Pedido> save(Pedido pedido);
+    Mono<Pedido> findById(String id);
 }

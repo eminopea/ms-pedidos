@@ -8,7 +8,7 @@ import org.openapitools.model.EstadoPedido;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
  
-import com.template.ms_pedidos.domain.dto.ProductoDetalle;
+import com.template.ms_pedidos.infrastructure.adapters.inbound.dto.ProductoDetalle;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
